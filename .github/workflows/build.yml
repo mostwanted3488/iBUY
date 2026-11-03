@@ -1,0 +1,88 @@
+name: Build iBuy
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows (VST3)
+            os: windows-latest
+            artifact: iBuy-Windows-VST3
+          - name: macOS (VST3 + AU)
+            os: macos-latest
+            artifact: iBuy-macOS-VST3-AU
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test the audio engine
+        if: runner.os == 'macOS'
+        run: |
+          clang++ -O2 -std=c++17 -Wall -Wextra -ISource test/engine_test.cpp -o engine_test
+          echo "Engine compiles cleanly."
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          $vst3 = Get-ChildItem -Path build -Recurse -Directory -Filter "iBuy.vst3" | Select-Object -First 1
+          if (-not $vst3) { throw "iBuy.vst3 not found" }
+          Copy-Item -Recurse $vst3.FullName dist/iBuy.vst3
+          Copy-Item README.md dist/README.md
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p dist
+          VST3=$(find build -type d -name "iBuy.vst3" | head -n 1)
+          AU=$(find build -type d -name "iBuy.component" | head -n 1)
+          test -n "$VST3" && test -n "$AU"
+          cp -R "$VST3" dist/iBuy.vst3
+          cp -R "$AU" dist/iBuy.component
+          # Ad-hoc signature so Apple Silicon Macs accept the bundles.
+          codesign --force --deep -s - dist/iBuy.vst3
+          codesign --force --deep -s - dist/iBuy.component
+          cp README.md dist/README.md
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Zip
+        run: |
+          cd artifacts
+          for d in */; do (cd "$d" && zip -r "../${d%/}.zip" .); done
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.zip
