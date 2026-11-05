@@ -1,4 +1,4 @@
-# iBuy
+# iBuyorbealoser
 
 An effects plugin shaped like an iPod classic. You work the plugin with its click wheel: turn it to scroll,
 press the centre to open or select, MENU to go back.
@@ -26,13 +26,13 @@ Every switch is a host parameter, so it can be automated.
 
 Download the zip for your system from the **Actions** tab (latest run, "Artifacts") or from **Releases**.
 
-**Windows**: copy `iBuy.vst3` to `C:\Program Files\Common Files\VST3\`, then rescan plugins in your DAW (FL Studio: Options > Manage plugins > Find installed plugins).
+**Windows**: copy `iBuyorbealoser.vst3` to `C:\Program Files\Common Files\VST3\`, then rescan plugins in your DAW (FL Studio: Options > Manage plugins > Find installed plugins).
 
-**macOS**: copy `iBuy.vst3` to `~/Library/Audio/Plug-Ins/VST3/` and `iBuy.component` to `~/Library/Audio/Plug-Ins/Components/`.
+**macOS**: copy `iBuyorbealoser.vst3` to `~/Library/Audio/Plug-Ins/VST3/` and `iBuyorbealoser.component` to `~/Library/Audio/Plug-Ins/Components/`.
 The files are not notarised, so macOS may block them the first time. Run this once in Terminal, then rescan:
 
 ```
-xattr -cr ~/Library/Audio/Plug-Ins/VST3/iBuy.vst3 ~/Library/Audio/Plug-Ins/Components/iBuy.component
+xattr -cr ~/Library/Audio/Plug-Ins/VST3/iBuyorbealoser.vst3 ~/Library/Audio/Plug-Ins/Components/iBuyorbealoser.component
 ```
 
 ## Build it yourself

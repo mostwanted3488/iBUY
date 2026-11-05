@@ -27,7 +27,7 @@ endif()
 juce_add_plugin(iBuy
     COMPANY_NAME "iBuy"
     BUNDLE_ID com.ibuy.plugin
-    PRODUCT_NAME "iBuy"
+    PRODUCT_NAME "iBuyorbealoser"
     PLUGIN_MANUFACTURER_CODE Ibuy
     PLUGIN_CODE Ibuy
     FORMATS ${IBUY_FORMATS}

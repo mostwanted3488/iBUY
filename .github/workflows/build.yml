@@ -1,4 +1,4 @@
-name: Build iBuy
+name: Build iBuyorbealoser
 
 on:
   push:
@@ -17,10 +17,10 @@ jobs:
         include:
           - name: Windows (VST3)
             os: windows-latest
-            artifact: iBuy-Windows-VST3
+            artifact: iBuyorbealoser-Windows-VST3
           - name: macOS (VST3 + AU)
             os: macos-latest
-            artifact: iBuy-macOS-VST3-AU
+            artifact: iBuyorbealoser-macOS-VST3-AU
 
     steps:
       - uses: actions/checkout@v4
@@ -42,23 +42,23 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
-          $vst3 = Get-ChildItem -Path build -Recurse -Directory -Filter "iBuy.vst3" | Select-Object -First 1
-          if (-not $vst3) { throw "iBuy.vst3 not found" }
-          Copy-Item -Recurse $vst3.FullName dist/iBuy.vst3
+          $vst3 = Get-ChildItem -Path build -Recurse -Directory -Filter "iBuyorbealoser.vst3" | Select-Object -First 1
+          if (-not $vst3) { throw "iBuyorbealoser.vst3 not found" }
+          Copy-Item -Recurse $vst3.FullName dist/iBuyorbealoser.vst3
           Copy-Item README.md dist/README.md
 
       - name: Package (macOS)
         if: runner.os == 'macOS'
         run: |
           mkdir -p dist
-          VST3=$(find build -type d -name "iBuy.vst3" | head -n 1)
-          AU=$(find build -type d -name "iBuy.component" | head -n 1)
+          VST3=$(find build -type d -name "iBuyorbealoser.vst3" | head -n 1)
+          AU=$(find build -type d -name "iBuyorbealoser.component" | head -n 1)
           test -n "$VST3" && test -n "$AU"
-          cp -R "$VST3" dist/iBuy.vst3
-          cp -R "$AU" dist/iBuy.component
+          cp -R "$VST3" dist/iBuyorbealoser.vst3
+          cp -R "$AU" dist/iBuyorbealoser.component
           # Ad-hoc signature so Apple Silicon Macs accept the bundles.
-          codesign --force --deep -s - dist/iBuy.vst3
-          codesign --force --deep -s - dist/iBuy.component
+          codesign --force --deep -s - dist/iBuyorbealoser.vst3
+          codesign --force --deep -s - dist/iBuyorbealoser.component
           cp README.md dist/README.md
 
       - name: Upload
