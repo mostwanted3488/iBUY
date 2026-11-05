@@ -114,7 +114,7 @@ std::vector<IBuyEditor::Item> IBuyEditor::itemsFor (const juce::String& key) con
 
 juce::String IBuyEditor::titleFor (const juce::String& key) const
 {
-    if (key == "root") return "iBuy";
+    if (key == "root") return "@buyorbealoser";
     if (key == "eq") return "EQ Presets";
     if (key == "effects") return "Effects";
     if (key == "looper") return "Looper";
